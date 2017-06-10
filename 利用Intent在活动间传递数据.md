@@ -1,6 +1,6 @@
-#利用Intent在活动间传递数据
+ # 利用Intent在活动间传递数据
 
-####1.（有数据传递的）活动的最佳启动方式：
+#### 1.（有数据传递的）活动的最佳启动方式：
 在被启动的活动中添加活动启动器
 ```java
 //Main2Activity活动中：
@@ -27,7 +27,7 @@ public void onClick(View v) {
         Log.d("Main2Activity", data1 + " " + data2);
 ```
 
-####2.向上一个活动返回数据
+#### 2.向上一个活动返回数据
 * 利用startActivityForResult()方法启动的活动在被finish()后自动调用
 启动者的onActivityResult()方法。
 * 通过在被启动活动中构造空的（只用来传递数据）Intent来向启动活动中传递数据
