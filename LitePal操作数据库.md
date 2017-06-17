@@ -10,17 +10,29 @@
   ```xml
   <?xml version="1.0" encoding="utf-8" ?>
   <litepal>
-  <dbname values="BookStore"></dbname>
-  <version values="1"></version>
+  <dbname value="BookStore"></dbname>
+  <version value="1"></version>
   <list>
 
   </list>
   </litepal>
   ```
 
+  1. Manifest 的application标签声明name
+
+```xml
+<application
+        android:name="org.litepal.LitePalApplication"
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+```
+
 ### 2.创建数据库
 
-1. 创建表的映射类
+1. 创建表的映射类，继承自DataSupport
 2. 将映射类添加到映射模型列表来声明
 3. 获取数据库 LitePal.getDatabase();
 
@@ -191,7 +203,7 @@ public void onClick(View v) {
 
 ```java
 public void onClick(View v) {
-               List<Book> books = 
+               List<Book> books =
                //每一行为一个Book的对象，存放到List中
                     DataSupport
                        .select("name", "author") //选列
