@@ -1,0 +1,34 @@
+## 一、悬浮按钮
+
+1. 在activity_main布局中加入 FloatingActionButton控件
+2. 普通方法设置点击事件
+
+```xml
+<android.support.design.widget.FloatingActionButton
+            android:id="@+id/fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="16dp"
+            android:src="@mipmap/ic_down" />
+```
+
+## 二、可交互提示
+```java
+fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Snackbar.make(v,"FloatingActionBar",Snackbar.LENGTH_SHORT).setAction("You sure?", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Toast.makeText(MainActivity.this, "Sure", Toast.LENGTH_SHORT).show();
+                    }
+                }).show();
+            }
+        });
+```
+
+## 三、利用CoordinatorLayout调节子控件的布局
+* 可以自动监听所有子空间的点击事件，作出布局响应，避免相互遮挡
+
+      <android.support.design.widget.CoordinatorLayout 
