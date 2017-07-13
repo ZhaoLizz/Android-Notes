@@ -1,6 +1,6 @@
 # ToolBar UI视图
 
-1. 隐藏默认的ActionBar视图：打开manifest中AppTheme改为NoActionBar
+1. 隐藏默认的ActionBar视图：打开values中AppTheme改为NoActionBar
 2. 在activity_main.xml中添加Toolbar的标签
 3. 在主活动中动态添加Toolbar
 
@@ -63,11 +63,11 @@ Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
     </application>
 ```
 
-1. 在Toolbar中添加按钮图标和点击事件
+**在Toolbar中添加按钮图标和点击事件**
 
-  1. 在res中新建menu菜单文件夹，创建toolbar.xml文件，加入item点击图标
-  2. mainactivity中 onCreateOptionsMenu动态加载菜单文件
-  3. OnOptionsItemSelected中设置图标的点击事件
+1. 在res中新建menu菜单文件夹，创建toolbar.xml文件，加入item点击图标
+2. mainactivity中 onCreateOptionsMenu动态加载菜单文件
+3. OnOptionsItemSelected中设置图标的点击事件
 
 ```xml
 //menu/toolbar.xml
@@ -121,3 +121,16 @@ Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
         return true;
     }
 ```
+
+## 常见问题
+
+* 在Fragment中使用toolbar添加菜单文件，默认不调用Fragment中的onCreateOptionsMenu。必须在 onCreate() 期间调用 setHasOptionsMenu(true) 来指出fragment愿意添加item到选项菜单
+
+```java
+//初始化toolbar
+//onCreate
+        toolbar = findViewbyId....
+        ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
+        setHasOptionsMenu(true);
+```
+
