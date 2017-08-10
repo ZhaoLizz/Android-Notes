@@ -42,4 +42,5 @@ swipeRefresh = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh);
 ### 注意事项
 * 转动球默认紧挨swipeRefreshLayout子布局的最上面，要注意是否被其他布局遮挡
 * setRefreshing（）： true时转动球会一直转动，f时停止转动
+* ps： ` new Handler().postDelayed(new Runnable{ ` 开启了子线程，此时主线程和子线程是同时进行的，子线程会延时进行。所以把setRefreshing（f）放到子线程外面会导致主线程先执行setfreshing（f），出现滑动球在子线程处理耗时逻辑时不会转动的bug
 
