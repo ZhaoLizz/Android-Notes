@@ -21,13 +21,25 @@
 
 ```java
 swipeRefresh = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh);
+        //是否缩放效果，最低高度，最高高度
+        swipeRefresh.setProgressViewOffset(false,100,200);
         swipeRefresh.setColorSchemeResources(R.color.colorPrimary);
         swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                Toast.makeText(MainActivity.this, "refesh", Toast.LENGTH_SHORT).show();
-                //刷新事件结束并隐藏进度条
-                swipeRefresh.setRefreshing(false);
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(MainActivity.this, "onRefresh", Toast.LENGTH_SHORT).show();
+                        adapter.setNewData(DataServer.getMultipleItemNewData());
+                        mSwipeRefreshLayout.setRefreshing(false);
+                    }
+                }, 3000);
             }
         });
 ```
+
+### 注意事项
+* 转动球默认紧挨swipeRefreshLayout子布局的最上面，要注意是否被其他布局遮挡
+* setRefreshing（）： true时转动球会一直转动，f时停止转动
+
