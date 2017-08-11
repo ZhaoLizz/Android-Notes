@@ -1,6 +1,6 @@
 # 使用HTTP协议访问网络
 
-#  **不能在UI线程操作耗时逻辑（如网络请求）,必须异步操作**
+# _不能在UI线程操作耗时逻辑（如网络请求）,必须异步操作_
 
 ## 一、使用系统的HttpURLConnection
 
@@ -91,8 +91,9 @@ private void sendRequestWithHttpURLConnection()
     }
 ```
 
-### HttpUrlConnection发送POST请求 
- * 代码也包括GET请求的方法
+### HttpUrlConnection发送POST请求
+
+- 代码也包括GET请求的方法
 
 ```java
 public class NetUtils {
@@ -185,7 +186,6 @@ public class NetUtils {
         return state;
     }
 }
-
 ```
 
 ## 二、开源库OkHttp
@@ -203,23 +203,23 @@ public class NetUtils {
   ```java
 
   private void sendRequestWithOkHttp(){
-    new Thread(new Runnable() {
-        @Override
-        public void run() {
-            try{
-                //先创建OkHttpClient
-                OkHttpClient client = new OkHttpClient();
-                //再连缀构建Request对象
-                Request request = new Request.Builder().url("http://www.baidu.com").build();
-                //通过newCall执行request获取回复
-                Response response = client.newCall(request).execute();
-                String responseData = response.body().string();
-                showResponse(responseData);
-            }catch (Exception e){
-                e.printStackTrace();
-            }
-        }
-    }).start();
+   new Thread(new Runnable() {
+       @Override
+       public void run() {
+           try{
+               //先创建OkHttpClient
+               OkHttpClient client = new OkHttpClient();
+               //再连缀构建Request对象
+               Request request = new Request.Builder().url("http://www.baidu.com").build();
+               //通过newCall执行request获取回复
+               Response response = client.newCall(request).execute();
+               String responseData = response.body().string();
+               showResponse(responseData);
+           }catch (Exception e){
+               e.printStackTrace();
+           }
+       }
+   }).start();
   }
   ```
 
@@ -232,6 +232,7 @@ public class NetUtils {
 5. 从Response中解析出String
 
 ```java
+//键值对请求
 private void sendPostRequestWithOkHttp(){
         new Thread(new Runnable() {
             @Override
@@ -258,3 +259,22 @@ private void sendPostRequestWithOkHttp(){
         }).start();
     }
 ```
+
+```java
+//Json数据post
+public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+
+    String post(String url, String json) throws IOException {
+        OkHttpClient client = new OkHttpClient();
+        RequestBody body = RequestBody.create(JSON, json);
+        Request request = new Request.Builder().url(url).post(body).build();
+        Response response = client.newCall(request).execute();
+        if (response.isSuccessful()) {
+            return response.body().toString();
+        } else {
+            throw new IOException("Unexpected code " + response);
+        }
+    }
+
+```
+
