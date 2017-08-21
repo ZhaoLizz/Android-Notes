@@ -1,5 +1,6 @@
 # Gson框架解析json字符串
 
+- `compile 'com.google.code.gson:gson:2.7'`
 *  json :
 `{
     "error_code": 0,
