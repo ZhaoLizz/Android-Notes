@@ -269,3 +269,68 @@ Post post = new Post();
             }
         });
 ```
+
+## include用法
+**include查询对象只能为BmobPointer类型，不能是BmobRelation类型**
+****
+
+* 在一个查询内获取`Pointer`类型的关联对象
+ 
+   查询帖子信息的同时查询该帖子的作者  `query.include("author")`
+* 用逗号来`include并列查询`两个对象
+
+    查询评论表的同时将评论用户的信息和所评论帖子的信息一并查询（因为Comment表有两个`Pointer`类型的字段）`query.include("user,post")`   
+
+* 用点进行`include中的内嵌对象查询`
+
+    查询评论的同时将该Comment对应的post及该post的作者author一并查询
+    `query.include("post.author")`
+
+* include指定返回的字段
+
+    `query.include("post[likes].author[username|email]")`
+    post指向的表只返回likes字段，author指向的表只返回username和email字段
+
+## 内部查询 `addWhereMatchesQuery`
+* 查询一个表中BmobObject字段。
+* 当查询的表为系统表时(`User Installation Role`),需要在前面带上下划线`_User`
+
+```java
+//查询带有图片的帖子的评论列表
+        //数据关系：Comment中的Post
+        BmobQuery<Comment> query = new BmobQuery<>();
+        BmobQuery<Post> innerQuery = new BmobQuery<>();
+        innerQuery.addWhereExists("image");
+
+        query.addWhereMatchesQuery("post", "Post", innerQuery); //addWhereDoseNotMatchesQuery
+        //参数：1.Comment中的帖子 *字段名* post
+        //2. Post字段的 *表名*
+        query.findObjects(new FindListener<Comment>() {
+            @Override
+            public void done(List<Comment> list, BmobException e) {
+                if (e == null) {
+                    Log.d(TAG, "done: query succed " + list.size());
+                } else {
+                    Log.d(TAG, "done: query failed " + e.getMessage());
+                }
+            }
+        });
+```
+
+```java
+//查询系统表
+BmobQuery<MyUser> innerQuery = new BmobQuery<>();
+
+        String[] friendIds = {"ssss", "aaaa"};//好友的objectId数组
+        innerQuery.addWhereContainedIn("objectId", Arrays.asList(friendIds));
+        //查询帖子
+        BmobQuery<Post> query = new BmobQuery<>();
+        query.addWhereMatchesQuery("author", "_User", innerQuery);
+        query.findObjects(listener...)
+```
+
+
+
+    
+   
+    
