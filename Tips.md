@@ -1,160 +1,76 @@
-# 利用Intent在活动间传递数据
+# Tips
 
-## 1.（有数据传递的）活动的最佳启动方式：
+## Toast改变默认位置
 
-在被启动的活动中添加活动启动器
+- `Toast.mekeText`方法会返回Toast对象，所以不用new
+- 如果直接连缀setGravity，注意该方法返回void
 
 ```java
-//Main2Activity活动中：
-public static void actionStart(Context context, String data1, String data2) {
-        Intent intent = new Intent(context, Main2Activity.class);
-        intent.putExtra("key_data1", data1);
-        intent.putExtra("key_data2", data2);
-        context.startActivity(intent);
-    }
+Toast toast = Toast.makeText(MainActivity.this,"TOP",Toast.LENGTH_SHORT);
+                toast.setGravity(Gravity.TOP,0,0);
+                toast.show();
 ```
 
-```java
-//由MainActivity向被启动的活动中传递数据
-public void onClick(View v) {
-                String data1 = "dddd1111";
-                String data2 = "dddd2222";
-                Main2Activity.actionStart(MainActivity.this,data1,data2);
-            }
-```
+## 设备旋转及存储活动数据
+
+- 在layout里新建一个同名的布局文件，在目录界面选择 `资源特征Oritation`, `ScreenOritation选LandScape`
+- 保存数据以应对设备旋转： 通过覆盖`onSaveInstanceState(Bundle)`方法(**活动停止时调用该方法**)，将一些数据保存在bundle中,然后在onCreate(Bundle)中取回这些数据
+- 最好只在bundle中保存基本类型的数据（不推荐保存实现了Serializable,Parcelable接口的对象，因为取出的对象可能已经没用了）
 
 ```java
-//Activity2获取数据
-        Intent intent = getIntent();
-        String data1 = intent.getStringExtra("key_data1");
-        String data2 = intent.getStringExtra("key_data2");
-        Log.d("Main2Activity", data1 + " " + data2);
-```
-
-## 2.向上一个活动返回数据
-
-- 利用startActivityForResult()方法启动的活动在被finish()后自动调用 启动者的onActivityResult()方法。
-- 通过在被启动活动中构造空的（只用来传递数据）Intent来向启动活动中传递数据,调用setResult(int requestCode,Intent)设置返回数据
-- 重载启动者的onActivityResult()方法。
-
-```java
-//MainActivity
-public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this,Main2Activity.class);
-                startActivityForResult(intent,1);  //1是requestCode，在onActivityResult中用到
-            }
-```
-
-```java
-//Activity2(被启动的活动)
-public void onClick(View v) {
-                Intent intent = new Intent();  //构建空得Intent用于传递数据
-                intent.putExtra("data_return","returnnnnnnnn");
-                setResult(RESULT_OK,intent);  //第一个参数是resultCode，用于onActivityResult
-                finish();//Activity2是由startActivityForResult()方法启动，
-                    //所以finish后自动调用onActivityResult
-            }
-```
-
-```java
-//MainActivity
+//重写方法，存入数据
+//活动中
 @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        switch (requestCode) {
-            case 1:
-                if (resultCode == RESULT_OK) {
-                    String returnedData = data.getStringExtra("data_return");
-                    Log.d("MainActivity", returnedData);
-                }
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        Log.d("QuziActivity", "onSaveInstanceState: ");
+        //K,V
+        outState.putInt(KEY_INDEX, mCurrentIndex);
+    }
+```
+
+```java
+//在onCreate中取出数据
+@Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_quiz);
+
+        if (savedInstanceState != null) {
+            //K,default values
+            mCurrentIndex = savedInstanceState.getInt(KEY_INDEX, 0);
         }
+
     }
 ```
 
-# 使用Intent传递对象
+## 布局中tools：context 提供预览功能
 
-## 1\. Serializable方式
-
-- 序列化接口，表示将一个对象转换成可存储或可传输的状态
-
-- 让需要传递的类implements Serializable
-
-- 现在可以通过Intent直接传递对象
-
-- 在被启动的活动中获取对象
+* `tools:context`是一个命名空间，覆盖某个组件的任何属性。
+* 如TextView的text属性，就可以写成`tools:text="AAAAA"`,提供预览的效果，而应用运行时不会显示该文字。
 
 ```java
-//Person
-public class Person implements Serializable{
-    private String name;
-    private int age;
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical"
 
-    getter and setter
-}
+    //添加命名空间
+    tools:context="com.example.a6100890.geoquiz.CheatActivity">
+
+  
+    <TextView
+        android:id="@+id/text_view_answer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="24dp"
+
+        //利用TextView 的text属性
+        tools:text="Answer"/>
+</LinearLayout>
 ```
 
-```java
-Person person = new Person();
-        person.setName("ZhaoLizz");
-        person.setAge(19);
-
-        //构建显示Intent
-        Intent intent = new Intent(MainActivity.this, SecondActivity.class);
-        intent.putExtra("person_data", person);
-        startActivity(intent);
-```
-
-## 2\. Parcelable
-
-- 将一个完整的对象进行分解，分解后的每一部分都是Intent支持的数据类型
-- 让需要被传递的类实现Parcelable接口
-- 提供CREATOR常量，注意读取的顺序必须和写入的顺序完全相同
-- 效率比Serializable方式高
-
-```java
-public class Person implements Parcelable {
-    private String name;
-    private int age;
-
-    getter and setter
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel parcel, int i) {
-        parcel.writeString(name);
-        parcel.writeInt(age);
-    }
-
-    public static final Parcelable.Creator<Person> CREATOR =
-            //调用默认构造方法
-            new Parcelable.Creator<Person>() {
-                @Override
-                public Person createFromParcel(Parcel parcel) {
-                    Person person = new Person();
-                    person.name = parcel.readString();
-                    person.age = parcel.readInt();
-                    return person;
-                }
-
-                @Override
-                public Person[] newArray(int i) {
-                    return new Person[i];
-                }
-            };
-}
-```
-
-```java
-//在活动中传递对象
-
-//MainActivity：构建显示Intent
-                Intent intent = new Intent(MainActivity.this, SecondActivity.class);
-                intent.putExtra("person_data", person);
-                startActivity(intent);
-
-//SecondActivity接收
-Person person = (Person) getIntent().getParcelableExtra("person_data");
-```
