@@ -101,6 +101,9 @@ Person person = new Person();
         Intent intent = new Intent(MainActivity.this, SecondActivity.class);
         intent.putExtra("person_data", person);
         startActivity(intent);
+
+//SecondActivity中获取对象
+Person person = (Person)getIntent().getSerializableExtra("person_data");
 ```
 
 ## 2\. Parcelable
