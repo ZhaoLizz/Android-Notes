@@ -104,6 +104,8 @@ Person person = new Person();
 
 //SecondActivity中获取对象
 Person person = (Person)getIntent().getSerializableExtra("person_data");
+
+//在Fragment中获取要先getActivity().getIntent...
 ```
 
 ## 2\. Parcelable
