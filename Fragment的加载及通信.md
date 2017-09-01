@@ -1,6 +1,6 @@
 # 碎片使用方式
 
-#### 1.静态加载碎片
+## 1.静态加载碎片
 
 1. 先新建一个left_fragment.xml
 2. 再新建LeftFragment类继承自Fragment,动态加载布局（第一第二步构造一个完整碎片）
@@ -35,32 +35,36 @@ public class LeftFragment extends Fragment {
 </LinearLayout>
 ```
 
-#### 2.动态加载碎片
-* 主要通过replaceFragment方法用已经构造好的碎片动态替换某**布局**
+## 2.动态加载碎片
+
+- 主要通过replaceFragment方法用**已经构造好的碎片**动态替换某**布局**
+
 ```xml
+
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="horizontal">
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  android:orientation="horizontal">
 
-    <fragment
-        android:id="@+id/left_framgent"
-        android:name="com.example.a6100890.note.LeftFragment"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1" />
+  <fragment
+      android:id="@+id/left_framgent"
+      android:name="com.example.a6100890.note.LeftFragment"
+      android:layout_width="0dp"
+      android:layout_height="match_parent"
+      android:layout_weight="1" />
 
-    //添加一个空的FrameLayout用于动态加载碎片
-    <FrameLayout
-        android:id="@+id/right_layout"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1">
+  //添加一个空的FrameLayout用于动态加载碎片
+  <FrameLayout
+      android:id="@+id/right_layout"
+      android:layout_width="0dp"
+      android:layout_height="match_parent"
+      android:layout_weight="1">
 
-    </FrameLayout>
+  </FrameLayout>
 
 </LinearLayout>
 ```
+
 ```java
 //MainActivity中
 private void replaceFragment(Fragment fragment){
@@ -73,12 +77,27 @@ private void replaceFragment(Fragment fragment){
         //transaction.addToBackStack(null);
         transaction.commit();//提交事务
     }
+`
 ```
 
-#### 3.碎片和活动之间进行通信
+```java
+//在未获取fragment实例的情况下动态加载
+FragmentManager fm = getSupportFragmentManager();
+        Fragment fragment = fm.findFragmentById(R.id.fragment_container);
+        //此时fragment可能是null(fragment在队列中的情况下不是null)
+
+        if (fragment == null) {
+            Log.d(TAG, "onCreate: fragment == null");
+            fragment = new CrimeFragment();
+            fm.beginTransaction().add(R.id.right_layout, fragment).commit();
+        }
+```
+
+## 3.碎片和活动之间进行通信
 
 1. 在活动中获取碎片的实例
-  * 通过findViewById（）方法从**布局文件**中获取碎片实例(好像只能获取静态加载的碎片)
+
+  - 通过findFragmentById（）方法从**活动的布局文件**中获取碎片实例
 
 ```java
 //MainActivity中
@@ -91,11 +110,11 @@ FragmentManager fm = getSupportFragmentManager();
             fragment = new CrimeFragment();
             fm.beginTransaction().add(R.id.fragment_container, fragment).commit();
         }
-
 ```
 
-  2.在碎片中获取活动的实例
-  * 通过getActivity()来得到和当前碎片相关联的活动实例
+2.在碎片中获取活动的实例
+
+- 通过getActivity()来得到和当前碎片相关联的活动实例
 
 ```java
 //RightFragment2
@@ -114,8 +133,8 @@ FragmentManager fm = getSupportFragmentManager();
         });
         return view;
     }
-
 ```
-3. 碎片和碎片通信
 
-* 很简单  **碎片---活动---碎片**，通过活动中介进行通信
+1. 碎片和碎片通信
+
+2. 很简单 **碎片---活动---碎片**，通过活动中介进行通信
