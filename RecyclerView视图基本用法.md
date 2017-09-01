@@ -1,6 +1,8 @@
 # RecyclerView
 
 * ViewHolder只做一件事：持有(容纳)View视图
+* Adapter的职责：创建必要的ViewHolder、绑定ViewHolder至模型曾数据
+* Recycler先调用getItemCount询问数组列表中包含多少个对象、然后调用onCreateViewHolder创建ViewHolder及其要显示的视图、最后调用onBindViewHolder绑定数据
 
 1. 先在app/build.gradle中添加依赖库
 2. 创建子项信息的类，子项的布局
