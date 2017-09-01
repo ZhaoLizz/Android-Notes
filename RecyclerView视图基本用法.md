@@ -1,11 +1,14 @@
-## RecyclerView
+# RecyclerView
+
+* ViewHolder只做一件事：持有(容纳)View视图
 
 1. 先在app/build.gradle中添加依赖库
 2. 创建子项信息的类，子项的布局
 3. 为RecyclerView准备适配器
 4. 设置recyclerView实例(设置布局方式、适配器)
 
-* 构建适配器
+5. 构建适配器
+
 ```java
 //新建FruitAdapter类
 public class FruitAdapter extends RecyclerView.Adapter<FruitAdapter.ViewHolder> {
@@ -74,10 +77,10 @@ public class FruitAdapter extends RecyclerView.Adapter<FruitAdapter.ViewHolder> 
         return mFruitList.size();
     }
 }
-
 ```
 
-* 设置recyclerView实例
+- 设置recyclerView实例
+
 ```java
 RecyclerView recyclerView = (RecyclerView)findViewById(R.id.recycler_view);
 
