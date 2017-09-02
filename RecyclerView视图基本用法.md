@@ -9,6 +9,7 @@
 - 创建子项信息的类，子项的布局
 
 - 为RecyclerView准备适配器
+
 - 设置recyclerView实例(设置布局方式、适配器)
 
 - 构建适配器
@@ -100,7 +101,10 @@ RecyclerView recyclerView = (RecyclerView)findViewById(R.id.recycler_view);
         recyclerView.setAdapter(adapter);
 ```
 
-
 ## 更新数据
-* 模型对象的数据改变后要调用`mAdapeter.notifyDataSetChanged()`通知recyclerView刷新数据
-* 一般来说，要保证fragmen视图得到刷新，在`onResume()`方法内更新代码是最安全的选择
+
+- 模型对象的数据改变后要调用`mAdapeter.notifyDataSetChanged()`通知recyclerView刷新数据.可以调用`mAdapeter.notifyItemChanged(int)`定位要刷新的ItemView
+- 一般来说，要保证fragmen视图得到刷新，在`onResume()`方法内更新代码是最安全的选择
+
+## 获取某view的当前位置
+* `mCrimeRecyclerView.getChildAdapterPosition(view)`
