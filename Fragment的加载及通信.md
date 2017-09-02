@@ -135,6 +135,45 @@ FragmentManager fm = getSupportFragmentManager();
     }
 ```
 
-1. 碎片和碎片通信
+3. 碎片和碎片通信
 
-2. 很简单 **碎片---活动---碎片**，通过活动中介进行通信
+    *  很简单 **碎片---活动---碎片**，通过活动中介进行通信
+
+## 4. 获取Intent中的extra信息
+
+* 一种是直接在Fragment中`getActivity().getIntent().get...(K)`,但是会造成和当前活动的强耦合性，破坏了Fragment的封装。当前fragment由某个**特定的activity**托管着，该特定的activity又有**特定的KEY**传入Intent的extra
+
+```java
+//fragment
+UUID crimeId = (UUID)getActivity().getIntent().getSerializableExtra(KEY);
+
+```
+
+#### 更好的办法：使用fragment argument
+**本质还是从Activity向fragment传递数据**
+* 思路：在托管当前fragment的活动中从intent中解析出extra对象，然后通过fragment argument再传入fragment。当前托管fragment的activity是中转站
+* 要附加argument bundle给fragment需要调用`Fragment.setArgument(Bundle)`，而且必须在**fragment创建后、动态加载给activity前完成**，所以最好放到`newInstance`方法中，把需要从intent中获取的数据作为参数传入
+1. 先**构建**一个Bundle对象作为`Fragment.setArgument(Bundle)`的参数。
+2. 在fragment实例中setArgument
+
+```java
+//Fragment
+public static CrimeFragment newInstance(UUID crimeId) {
+        Bundle args = new Bundle();
+        args.putSerializable(ARG_CRIME_ID, crimeId);
+
+        CrimeFragment fragment = new CrimeFragment();
+        fragment.setArguments(args);
+
+        return fragment;
+    }
+```
+
+```java
+//activity
+@Override
+    protected Fragment createFramgent() {
+        UUID crimeId = (UUID) getIntent().getSerializableExtra(EXTRA_CRIME_ID);
+        return CrimeFragment.newInstance(crimeId);
+    }
+```
