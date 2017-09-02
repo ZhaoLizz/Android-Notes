@@ -1,15 +1,17 @@
 # RecyclerView
 
-* ViewHolder只做一件事：持有(容纳)View视图
-* Adapter的职责：创建必要的ViewHolder、绑定ViewHolder至模型曾数据
-* Recycler先调用getItemCount询问数组列表中包含多少个对象、然后调用onCreateViewHolder创建ViewHolder及其要显示的视图、最后调用onBindViewHolder绑定数据
+- ViewHolder只做一件事：持有(容纳)View视图
+- Adapter的职责：创建必要的ViewHolder、绑定ViewHolder至模型曾数据
+- Recycler先调用getItemCount询问数组列表中包含多少个对象、然后调用onCreateViewHolder创建ViewHolder及其要显示的视图、最后调用onBindViewHolder绑定数据
 
-1. 先在app/build.gradle中添加依赖库
-2. 创建子项信息的类，子项的布局
-3. 为RecyclerView准备适配器
-4. 设置recyclerView实例(设置布局方式、适配器)
+- 先在app/build.gradle中添加依赖库
 
-5. 构建适配器
+- 创建子项信息的类，子项的布局
+
+- 为RecyclerView准备适配器
+- 设置recyclerView实例(设置布局方式、适配器)
+
+- 构建适配器
 
 ```java
 //新建FruitAdapter类
@@ -97,3 +99,8 @@ RecyclerView recyclerView = (RecyclerView)findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(adapter);
 ```
+
+
+## 更新数据
+* 模型对象的数据改变后要调用`mAdapeter.notifyDataSetChanged()`通知recyclerView刷新数据
+* 一般来说，要保证fragmen视图得到刷新，在`onResume()`方法内更新代码是最安全的选择
