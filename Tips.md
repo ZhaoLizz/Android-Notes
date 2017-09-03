@@ -46,8 +46,8 @@ Toast toast = Toast.makeText(MainActivity.this,"TOP",Toast.LENGTH_SHORT);
 
 ## 布局中tools：context 提供预览功能
 
-* `tools:context`是一个命名空间，覆盖某个组件的任何属性。
-* 如TextView的text属性，就可以写成`tools:text="AAAAA"`,提供预览的效果，而应用运行时不会显示该文字。
+- `tools:context`是一个命名空间，覆盖某个组件的任何属性。
+- 如TextView的text属性，就可以写成`tools:text="AAAAA"`,提供预览的效果，而应用运行时不会显示该文字。
 
 ```java
 <LinearLayout
@@ -62,7 +62,7 @@ Toast toast = Toast.makeText(MainActivity.this,"TOP",Toast.LENGTH_SHORT);
     //添加命名空间
     tools:context="com.example.a6100890.geoquiz.CheatActivity">
 
-  
+
     <TextView
         android:id="@+id/text_view_answer"
         android:layout_width="wrap_content"
@@ -74,3 +74,14 @@ Toast toast = Toast.makeText(MainActivity.this,"TOP",Toast.LENGTH_SHORT);
 </LinearLayout>
 ```
 
+## fori遍历获取到所要结果时记得break
+
+```java
+for (int i = 0; i < mCrimes.size(); i++) {
+            if (mCrimes.get(i).getId().equals(crimeId)) {
+                mViewPager.setCurrentItem(i);
+                //break!
+                break;
+            }
+        }
+```
