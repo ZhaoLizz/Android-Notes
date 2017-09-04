@@ -85,3 +85,21 @@ for (int i = 0; i < mCrimes.size(); i++) {
             }
         }
 ```
+
+
+## 菜单icon资源
+
+```xml
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto"
+    >
+
+    <item
+        android:id="@+id/new_crime"
+        android:icon="@android:drawable/ic_menu_add"
+        android:title="@string/new_crime"
+        app:showAsAction="ifRoom|withText"/>
+
+</menu>
+```
+
