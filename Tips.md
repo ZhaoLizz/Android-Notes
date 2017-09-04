@@ -86,7 +86,6 @@ for (int i = 0; i < mCrimes.size(); i++) {
         }
 ```
 
-
 ## 菜单icon资源
 
 ```xml
@@ -103,3 +102,9 @@ for (int i = 0; i < mCrimes.size(); i++) {
 </menu>
 ```
 
+## 代码控制点击返回键
+
+
+```java
+getActivity().onBackPressed();
+```
