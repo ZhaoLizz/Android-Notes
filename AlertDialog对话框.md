@@ -7,20 +7,67 @@
 2. 把DlertDialog封装进Fragment
 3. 用show方法启动封装的fragment
 ```java
-//封装AlertDialog
-public class DatePickerFragment extends DialogFragment{
+//封装AlertDialog，重写onCreateDialog
+public class DatePickerFragment extends DialogFragment {
+    private static final String TAG = "DatePickerFragment";
+    private static final String ARG_DATE = "date";
+    private DatePicker mDatePicker;
+    public static final String EXTRA_DATE = "com.example.a6100890.criminalintent.date";
+
+
+    public static DatePickerFragment newInstance(Date date) {
+        Bundle args = new Bundle();
+        args.putSerializable(ARG_DATE, date);
+
+        DatePickerFragment fragment = new DatePickerFragment();
+        fragment.setArguments(args);
+        return fragment;
+    }
+
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-      //弹出的对话框的View
+        //获取、解析Date
+        Date date = (Date) getArguments().getSerializable(ARG_DATE);
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        int year = calendar.get(Calendar.YEAR);
+        int month = calendar.get(Calendar.MONTH);
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
+
         View view = LayoutInflater.from(getActivity()).inflate(R.layout.dialog_date, null);
+        mDatePicker = (DatePicker) view.findViewById(R.id.dialog_date_picker);
+        mDatePicker.init(year, month, day, null);
+
 
         return new AlertDialog.Builder(getActivity())
                 .setTitle(R.string.date_picker_title)
-                .setPositiveButton(android.R.string.ok, null) //onClickListener
+                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        int year = mDatePicker.getYear();
+                        int month = mDatePicker.getMonth();
+                        int day = mDatePicker.getDayOfMonth();
+                        Date date = new GregorianCalendar(year, month, day).getTime();
+
+                        sendResult(Activity.RESULT_OK, date);
+                    }
+                }) //onClickListener
                 .setView(view)
                 .create();
     }
+
+    private void sendResult(int resultCode, Date date) {
+        if (getTargetFragment() == null) {
+            return;
+        }
+        Intent intent = new Intent();
+        intent.putExtra(EXTRA_DATE, date);
+
+        //TargetFragment是CrimeFragment
+        getTargetFragment().onActivityResult(getTargetRequestCode(), resultCode, intent);
+    }
+
 }
 
 ```
