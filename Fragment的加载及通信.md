@@ -135,8 +135,78 @@ FragmentManager fm = getSupportFragmentManager();
     }
 ```
 
-## 碎片和碎片通信
-* 可以通过活动作为中介，也可以通过fragment argument进行通信
+## 碎片和碎片通信（fragmentA与B通信）
+
+- 传入数据(A->B)：使用fragment argument
+- 返回数据(B->A)：设置接收返回数据的fragment(A)为目标fragment，调用目标fragment的onActivityResult方法
+
+
+**传入数据**
+```java
+//传入数据  CrimeFragment->DatePickerFragment
+//DatePickerFragment构建newInstance
+public static DatePickerFragment newInstance(Date date) {
+        Bundle args = new Bundle();
+        args.putSerializable(ARG_DATE, date);
+
+        DatePickerFragment fragment = new DatePickerFragment();
+        fragment.setArguments(args);
+        return fragment;
+    }
+---------------------------
+
+//CrimeFragment调用DatePickerFragment.newInsatance，传入参数、启动fragment
+DatePickerFragment dialog = DatePickerFragment.newInstance(mCrime.getDate());
+(虚拟代码)transaction.add(..).commmit
+-----------------------------
+
+//在DatePickerFragment中获取传入的argument信息
+//onCreate(Bundle)
+Date date = (Date) getArguments().getSerializable(ARG_DATE);
+```
+
+**返回数据**
+
+```java
+//DatePickerFragment->CrimeFragment
+
+启动fragmentB时，为被启动的fragmentB设置接收返回数据的targetFragment（A）和请求码
+DatePickerFragment dialog = DatePickerFragment.newInstance(mCrime.getDate());
+                dialog.setTargetFragment(CrimeFragment.this,REQUEST_DATE);
+                transaction.add(..).commmit//启动fragment
+
+-------------------
+
+//被启动的DatePickerFragment：写一个sendResult方法并调用
+//resultCode传入的Activity.OK
+private void sendResult(int resultCode, Date date) {
+        if (getTargetFragment() == null) {
+            return;
+        }
+        //把要返回的数据存入intent
+        Intent intent = new Intent();
+        intent.putExtra(EXTRA_DATE, date);
+
+        //TargetFragment是CrimeFragment
+        //调用TargetFragment的onActivityResult
+        getTargetFragment().onActivityResult(getTargetRequestCode(), resultCode, intent);
+    }
+
+------------------
+//CrimeFragment 获取返回的数据
+@Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode != Activity.RESULT_OK) {
+            return;
+        }
+
+        if (requestCode == REQUEST_DATE) {
+            Date date = (Date) data.getSerializableExtra(DatePickerFragment.EXTRA_DATE);
+            mCrime.setDate(date);
+            mDateButton.setText(mCrime.getDate().toString());
+        }
+    }
+```
 
 ## 4\. 获取Intent中的extra信息
 
