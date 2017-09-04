@@ -3,9 +3,11 @@
 - 建议将AlertDialog封装在DialogFragment的实例中使用
 - 导入AlertDialog时用support.v7.app库
 
-1. 创建弹窗的View
-2. 把DlertDialog封装进Fragment
-3. 用show方法启动封装的fragment
+- 创建弹窗的View
+
+- 把DlertDialog封装进Fragment
+- 用show方法启动封装的fragment
+
 ```java
 //封装AlertDialog，重写onCreateDialog
 public class DatePickerFragment extends DialogFragment {
@@ -69,7 +71,6 @@ public class DatePickerFragment extends DialogFragment {
     }
 
 }
-
 ```
 
 ```xml
@@ -91,6 +92,7 @@ public void onClick(View view) {
                 FragmentManager manager = getFragmentManager();
                 DatePickerFragment dialog = new DatePickerFragment();
                 //传入一个tag常量，可唯一识别FragmentManager队列中的DialogFragment
+                dialog.setTargetFragment(CrimeFragment.this,REQUEST_DATE);
                 dialog.show(manager, DIALOG_DATE);
             }
 ```
