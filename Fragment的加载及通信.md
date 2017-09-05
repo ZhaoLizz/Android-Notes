@@ -93,6 +93,17 @@ FragmentManager fm = getSupportFragmentManager();
         }
 ```
 
+## 销毁当前fragment
+
+* 可以直接控制返回键`getActivity().onBackPressed()`
+* 可以从栈中弹出当前fragment
+
+```java
+Fragment currentFragment = mFragmentManager.findFragmentById(R.id.activity_crime_pager_view_pager);
+                mFragmentManager.beginTransaction().remove(currentFragment).commit();
+
+```
+
 ## 3.碎片和活动之间进行通信
 
 1. 在活动中获取碎片的实例
@@ -140,8 +151,8 @@ FragmentManager fm = getSupportFragmentManager();
 - 传入数据(A->B)：使用fragment argument
 - 返回数据(B->A)：设置接收返回数据的fragment(A)为目标fragment，调用目标fragment的onActivityResult方法
 
-
 **传入数据**
+
 ```java
 //传入数据  CrimeFragment->DatePickerFragment
 //DatePickerFragment构建newInstance
