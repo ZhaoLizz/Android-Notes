@@ -131,6 +131,16 @@ public void addCrime(Crime crime) {
     }
 ```
 
+#### 删除数据
+
+
+```java
+public void deleteCrime(Crime crime) {
+        String uuidString = crime.getId().toString();
+        mDatabase.delete(CrimeTable.NAME, CrimeTable.Cols.UUID + " = ?", new String[]{uuidString});
+    }
+```
+
 #### 读取数据
 
 
@@ -217,12 +227,110 @@ private CrimeCursorWrapper queryCrimes(String whereClause, String[] whereArgs) {
     }
  ```
 
+ ****
 
+ ## 单例模式下的数据库操作总览
 
-    public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
-        
-    }
-}
+ ```java
+ public class CrimeLab {
+     private static CrimeLab sCrimeLab;
+ 
+     private Context mContext;
+     private SQLiteDatabase mDatabase;
+ 
+     //private 使得其他类无法创建该对象
+     //除非调用get方法
+     private CrimeLab(Context context) {
+         mContext = context.getApplicationContext();
+         mDatabase = new CrimeBaseHelper(mContext).getWritableDatabase();
+     }
+ 
+     //插入记录
+     public void addCrime(Crime crime) {
+         ContentValues values = getContentValues(crime);
+ 
+         //数据表名、失败默认值、要写入的数据
+         mDatabase.insert(CrimeTable.NAME, null, values);
+     }
+ 
+     //更新数据  先更新ContentValues
+     public void updateCrime(Crime crime) {
+         String uuidString = crime.getId().toString();
+         ContentValues values = getContentValues(crime);
+ 
+         //表名，ContentValues，where子句，where子句的填充值
+         mDatabase.update(CrimeTable.NAME, values, CrimeTable.Cols.UUID + " = ?", new String[]{uuidString});
+     }
+ 
+     public void deleteCrime(Crime crime) {
+         String uuidString = crime.getId().toString();
+         mDatabase.delete(CrimeTable.NAME, CrimeTable.Cols.UUID + " = ?", new String[]{uuidString});
+     }
+ 
+ 
+     public static CrimeLab get(Context context) {
+         if (sCrimeLab == null) {
+             sCrimeLab = new CrimeLab(context);
+         }
+         return sCrimeLab;
+     }
+ 
+     public List<Crime> getCrimes() {
+         List<Crime> crimes = new ArrayList<>();
+         CrimeCursorWrapper cursor = queryCrimes(null, null);
+ 
+         try {
+             cursor.moveToFirst();
+             while (!cursor.isAfterLast()) {
+                 crimes.add(cursor.getCrime());
+                 cursor.moveToNext();
+             }
+         } finally {
+             cursor.close();
+         }
+ 
+         return crimes;
+     }
+ 
+     public Crime getCrime(UUID id) {
+         CrimeCursorWrapper cursor = queryCrimes(CrimeTable.Cols.UUID + " = ?", new String[]{id.toString()});
+ 
+         try {
+             if (cursor.getCount() == 0) {
+                 return null;
+             }
+ 
+             cursor.moveToFirst();
+             return cursor.getCrime();
+         } finally {
+             cursor.close();
+         }
+     }
+ 
+     private static ContentValues getContentValues(Crime crime) {
+         ContentValues values = new ContentValues();
+         values.put(CrimeTable.Cols.UUID, crime.getId().toString());
+         values.put(CrimeTable.Cols.TITLE, crime.getTitle());
+         values.put(CrimeTable.Cols.DATE, crime.getDate().getTime());
+         values.put(CrimeTable.Cols.SOLVED, crime.isSolved() ? 1 : 0);
+ 
+         return values;
+     }
+ 
+     private CrimeCursorWrapper queryCrimes(String whereClause, String[] whereArgs) {
+         Cursor cursor = mDatabase.query(
+                 CrimeTable.NAME,
+                 null,//Columns - null selects all columns
+                 whereClause,
+                 whereArgs,
+                 null, //group by
+                 null,//having
+                 null //orderBy
+         );
+         return new CrimeCursorWrapper(cursor);
+     }
+ }
 
-```
+ ```
+
 
