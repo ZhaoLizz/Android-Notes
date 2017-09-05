@@ -104,7 +104,12 @@ for (int i = 0; i < mCrimes.size(); i++) {
 
 ## 代码控制点击返回键
 
-
 ```java
 getActivity().onBackPressed();
 ```
+
+## 获取应用上下文applicationContext
+
+`mContext = context.getApplicationContext();`
+
+- 只要有activity存在，android就会创建application对象，它的生命周期比任何activity都要长，常用于创建单例对象（构造方法）
