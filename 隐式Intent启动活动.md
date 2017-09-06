@@ -26,6 +26,21 @@ public void onClick(View v) {
                 intent.setData(Uri.parse("http://www.baidu.com"));
                 startActivity(intent);
                 }
+
+public void onClick(View view) {
+    Intent i = new Intent(Intent.ACTION_SEND);
+    i.setType("text/plain");
+    //消息内容
+    i.putExtra(Intent.EXTRA_TEXT, getCrimeReport());
+    //主题
+    i.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.crime_report_subject));
+    
+    //创建一个选择器显示相应隐式intent的全部activity
+    //主要用于每次都强行打开activity选择器并修改提示标题
+    i = Intent.createChooser(i, getString(R.string.send_crime_report));
+
+    startActivity(i);
+                            }
 ```
 
 **例2.自定义intent**
@@ -46,4 +61,18 @@ public void onClick(View v) {
   intent.addCategory("com.example.a6100890.note.MY_CATEGORY");
   startActivity(intent);
 
+  
+
 ```
+
+
+****
+
+
+
+## 隐式Intent的组成
+
+* 要执行的操作：通常以Intent类的常量来表示
+* 待访问数据的位置：可能是某个网页或文件的URL，或者ContentProvider中某个内容URI
+* 操作涉及的数据类型：如果一个intent包含数据位置，通常可以从中推测出数据的类型
+* 可选类别category：描述何时用什么方式使用某个activity
