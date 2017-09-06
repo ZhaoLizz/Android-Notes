@@ -1,4 +1,4 @@
-###隐式Intent
+# 隐式Intent
 
 * 有两个标签，一个action，一个category。  如果启动其他程序的活动，要setData（添加data标签）。
 
