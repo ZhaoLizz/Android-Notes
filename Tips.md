@@ -113,3 +113,11 @@ getActivity().onBackPressed();
 `mContext = context.getApplicationContext();`
 
 - 只要有activity存在，android就会创建application对象，它的生命周期比任何activity都要长，常用于创建单例对象（构造方法）
+
+## LinearLayout的divider分割线属性
+
+```java
+android:divider="?android:attr/dividerHorizontal"
+android:showDividers = "middle|end|beginning|none"
+
+```
