@@ -103,8 +103,30 @@ RecyclerView recyclerView = (RecyclerView)findViewById(R.id.recycler_view);
 
 ## 更新数据
 
-- 模型对象的数据改变后要调用`mAdapeter.notifyDataSetChanged()`通知recyclerView刷新数据.可以调用`mAdapeter.notifyItemChanged(int)`定位要刷新的ItemView
+- 模型对象的数据改变后要调用`mAdapeter.notifyDataSetChanged()`通知recyclerView刷新数据
 - 一般来说，要保证fragmen视图得到刷新，在`onResume()`方法内更新代码是最安全的选择
 
-## 获取某view的当前位置
-* `mCrimeRecyclerView.getChildAdapterPosition(view)`
+```java
+public void updataUI() {
+        //单例类创建实例
+        CrimeLab crimeLab = CrimeLab.get(getActivity());
+        List<Crime> crimes = crimeLab.getCrimes();
+
+        if (crimes.size() != 0) {
+            mNullView.setVisibility(View.GONE);
+        } else {
+            mNullView.setVisibility(View.VISIBLE);
+        }
+
+        if (mAdapter == null) {
+            mAdapter = new CrimeAdapter(crimes);
+            mCrimeRecycler.setAdapter(mAdapter);
+        } else {
+            mAdapter.setCrimes(crimes);
+            mAdapter.notifyItemChanged(position);
+        }
+
+        updateSubtitle();
+
+    }
+```
