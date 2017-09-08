@@ -95,13 +95,12 @@ FragmentManager fm = getSupportFragmentManager();
 
 ## 销毁当前fragment
 
-* 可以直接控制返回键`getActivity().onBackPressed()`
-* 可以从栈中弹出当前fragment
+- 可以直接控制返回键`getActivity().onBackPressed()`
+- 可以从栈中弹出当前fragment
 
 ```java
 Fragment currentFragment = mFragmentManager.findFragmentById(R.id.activity_crime_pager_view_pager);
                 mFragmentManager.beginTransaction().remove(currentFragment).commit();
-
 ```
 
 ## 3.碎片和活动之间进行通信
@@ -266,4 +265,75 @@ public void onCreate(@Nullable Bundle savedInstanceState) {
         UUID crimeId = (UUID) getArguments().getSerializable(ARG_CRIME_ID);
         mCrime = CrimeLab.get(getActivity()).getCrime(crimeId);
     }
+```
+
+## 5\. Fragment回调接口  （与activity通信）
+
+- 比如：平板设备一个activity托管两个fragment，创建activity时只启动了一个fragment，为了保证解耦性，需要第一个fragment通知activity再启动第二个fragment，这时用到了第一个fragment的回调接口
+- 使用情况：委托工作任务给托管activity，有了回调接口，就不用关心谁是托管者，fragment可以直接调用托管activity的方法
+- 直接调用托管activity方法的途径：在fragment中定义接口，让activity实现定义的接口，然后在fragment调用在本身中声明的接口，此时执行的就是在activity中实现的接口的方法
+
+```java
+//CrimeLisFragment创建接口
+private Callbacks mCallbacks;
+
+    public interface Callbacks {
+        void onCrimeSelected(Crime crime);
+    }
+
+    //fragment附加给activity时调用
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        //context <-- (fragment/activity)--implements Callbacks
+        mCallbacks = (Callbacks) context;
+    }
+
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mCallbacks = null;
+    }
+```
+
+```java
+//CrimeListActivity实现接口
+public class CrimeListActivity extends SingleFragmentActivity implements CrimeListFragment.Callbacks
+
+@Override
+   public void onCrimeSelected(Crime crime) {
+       Log.d(TAG, "onCrimeSelected: onCrimeSelected");
+       //双布局layout的第二个fragment_container
+       //如果使用手机用户界面，启动新的activity
+       if (findViewById(R.id.detail_fragment_container) == null) {
+           //通过第二个activity的newIntent方法创建intent，Extra放入crimeId
+           //第二个activity被启动时从intent中获取crimeId
+           Intent intent = CrimePagerActivity.newIntent(this, crime.getId());
+           startActivity(intent);
+       } else {
+           //如果使用平板界面，将CrimeFragment放入第二个fragment_container布局中
+           Fragment newDetail = CrimeFragment.newInstance(crime.getId());
+
+           getSupportFragmentManager()
+                   .beginTransaction()
+                   .replace(R.id.detail_fragment_container, newDetail)
+                   .commit();
+       }
+   }
+```
+
+
+```java
+//CrimeListFragment调用在CrimeListFragment中声明的接口
+public boolean onOptionsItemSelected(MenuItem item)                        {
+        switch (item.getItemId()) {
+            case R.id.new_crime:
+                Crime crime = new Crime();
+                CrimeLab.get(getActivity()).addCrime(crime);
+                updataUI();
+                
+                mCallbacks.onCrimeSelected(crime);
+                
+                return true;
 ```
