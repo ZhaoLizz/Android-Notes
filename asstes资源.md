@@ -74,6 +74,20 @@ public class BeatBox {
         int soundId = mSoundPool.load(afd, 1);
         sound.setSoundId(soundId);
     }
+
+    public void play(Sound sound) {
+        Integer soundId = sound.getSoundId();
+        if (soundId == null) {
+            return;
+        }
+        //音频Id，左音量，右音量，优先级，是否循环(0否，-1是)，播放速率
+        mSoundPool.play(soundId, 1.0f, 1.0f, 1, 0, 1.0f);
+    }
+
+    //onDestory中调用
+    public void release() {
+        mSoundPool.release();
+    }
 }
 ```
 
@@ -176,3 +190,8 @@ public void play(Sound sound) {
         mSoundPool.play(soundId, 1.0f, 1.0f, 1, 0, 1.0f);
     }
 ```
+
+## 释放音频
+
+* 音频播放完毕应调用`SoundPool.release()`方法释放SoundPool
+
