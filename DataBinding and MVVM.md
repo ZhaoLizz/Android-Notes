@@ -1,7 +1,5 @@
 # 数据绑定
 
-
-
 ## 启用数据绑定
 
 ```java
@@ -19,7 +17,7 @@ buildTypes {
 
 ## 把一般布局改造为数据绑定布局
 
-* 直接绑定了某个视图，使得视图里的子组件在生成的绑定类里被实例化。注意子布局一定要加id才能通过binding实例引用
+- 直接绑定了某个视图，使得视图里的子组件在生成的绑定类里被实例化。注意子布局一定要加id才能通过binding实例引用
 - <layout / 使数据绑定工具编译后生成一个同名数据绑定类(FragmentbeatBoxBinding)
 - 现在实例化视图层级结构时，不再使用LayoutInflater，而是实例化数据绑定类
 - 数据绑定类的`getRoot()`方法引用整个视图，`.recyclerView`引用视图子类
@@ -78,7 +76,7 @@ public class BeatBoxFragment extends Fragment {
         //配置recyclerView
         binding.recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 3));
         binding.recyclerView.setAdapter(new SoundAdapter(new BeatBox(getActivity()).getSounds()));
-        
+
         return binding.getRoot();
     }
 
@@ -101,7 +99,7 @@ public class BeatBoxFragment extends Fragment {
         public SoundAdapter(List<Sound> sounds) {
             mSounds = sounds;
         }
-        
+
         @Override
         public SoundHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             LayoutInflater inflater = LayoutInflater.from(getActivity());
@@ -120,7 +118,6 @@ public class BeatBoxFragment extends Fragment {
         }
     }
 }
-
 ```
 
 --------------------------------------------------------------------------------
@@ -162,7 +159,7 @@ public class SoundViewModel {
 
 1. 在布局文件里声明属性
 
-    * 声明后就可以在绑定类里用绑定表达式使用viewModel
+  - 声明后就可以在绑定类里用绑定表达式使用viewModel
 
 ```xml
 //list_item_sound
@@ -190,7 +187,7 @@ public class SoundViewModel {
 </layout>
 ```
 
-2. 关联使用视图模型
+1. 关联使用视图模型
 
 ```java
 //recyclerView的item的holder
@@ -226,13 +223,11 @@ public class SoundViewModel {
 
 ## 绑定数据观察
 
-
 - 在视图模型层继承BaseObservable类
 
 - 使用@Bindable注解视图模型里可绑定的属性
+
 - 每次@Bindable可绑定的属性值改变时就自动调用`notifyChange()`方法通知绑定类，视图模型对象上所有可绑定属性已经更新。或`notifyPropertyChanged(int)`表示只有getTitle方法的值有变化
-
-
 
 ```java
 public class SoundViewModel extends BaseObservable{
