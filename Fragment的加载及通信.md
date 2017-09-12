@@ -267,7 +267,7 @@ public void onCreate(@Nullable Bundle savedInstanceState) {
     }
 ```
 
-## 5\. Fragment回调接口  （与activity通信）
+## 5\. Fragment回调接口 （与activity通信）
 
 - 比如：平板设备一个activity托管两个fragment，创建activity时只启动了一个fragment，为了保证解耦性，需要第一个fragment通知activity再启动第二个fragment，这时用到了第一个fragment的回调接口
 - 使用情况：委托工作任务给托管activity，有了回调接口，就不用关心谁是托管者，fragment可以直接调用托管activity的方法
@@ -323,7 +323,6 @@ public class CrimeListActivity extends SingleFragmentActivity implements CrimeLi
    }
 ```
 
-
 ```java
 //CrimeListFragment调用在CrimeListFragment中声明的接口
 public boolean onOptionsItemSelected(MenuItem item)                        {
@@ -332,8 +331,14 @@ public boolean onOptionsItemSelected(MenuItem item)                        {
                 Crime crime = new Crime();
                 CrimeLab.get(getActivity()).addCrime(crime);
                 updataUI();
-                
+
                 mCallbacks.onCrimeSelected(crime);
-                
+
                 return true;
 ```
+
+## 保留fragment
+
+* `setRetainInstance(true)`在onCreate方法中调用
+* 为了应对设备配置的变化(一般是应用于旋转设备)，调用此方法可保留fragment，已保留的fragment不会随activity一起被销毁，它会一直保留，其全部实例变量的值也会保持不变
+* 该fragment的视图被销毁，但本身不会被销毁
