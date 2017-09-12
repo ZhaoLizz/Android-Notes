@@ -258,3 +258,43 @@ public class SoundViewModel extends BaseObservable{
     }
 }
 ```
+
+## 数据绑定回调
+
+* 按钮响应事件：关联按钮对象和onButtonClicked()方法
+
+```java
+//在视图模型层SoundViewModel类中添加onButtonClick方法
+public void onButtonClicked() {
+        mBeatBox.play(mSound);
+    }
+
+```
+
+```xml
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- 在绑定类上定义了一个叫viewModel的属性，同时还自动包括SoundViewModel的
+    getter和setter方法  -->
+    <!-- 绑定的类的类型是SoundViewModel视图模型 -->
+
+    <data>
+
+        <variable
+            name="viewModel"
+            type="com.example.a6100890.beatbox.SoundViewModel">
+        </variable>
+    </data>
+
+
+    <!-- 语法糖等价于viewModel.getTitle()-->
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:onClick="@{()-> viewModel.onButtonClicked()}"
+        android:text="@{viewModel.title}"
+        tools:text="Sound name"/>
+
+</layout>
+```
