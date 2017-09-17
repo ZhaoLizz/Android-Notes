@@ -4,8 +4,7 @@
 
 ## 一、使用系统的HttpURLConnection
 
-- <uses-permission android:name="android.permission.INTERNET">
-  </uses-permission>
+- `<uses-permission android:name="android.permission.INTERNET"> </uses-permission>`
 
 - 通过url对象获取HttpURLConnection对象实例
 
@@ -89,6 +88,48 @@ private void sendRequestWithHttpURLConnection()
             }
         });
     }
+```
+
+```java
+//权威指南
+public class FlickrFetchr {
+
+    //从指定URL获取原始数据并返回一个字节流数组
+    public byte[] getUrlBytes(String urlSpec) throws IOException {
+        //包装String urlSpec 为URL对象
+        URL url = new URL(urlSpec);
+        //创建一个指向要访问URL的连接对象
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+        try {
+            //由于是GET请求,所以是getInputStream,如果是POST就是getOutputStream
+            //调用此方法connection连接到URL地址,得到反馈代码
+            InputStream in = connection.getInputStream();
+            //回应码不等于正常时
+            if (connection.getResponseCode() != HttpURLConnection.HTTP_OK) {
+                throw new IOException(connection.getResponseMessage() + ": with" + urlSpec);
+            }
+
+
+            //循环调用read方法从获取的inputStream中读取数据直到取完为止
+            //把读取到的数据写入ByteArrayOutputStream数组
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            int bytesRead = 0;
+            byte[] buffer = new byte[1024];
+            while ((bytesRead = in.read(buffer)) > 0) {
+                out.write(buffer, 0, bytesRead);
+            }
+            out.close();
+            return out.toByteArray();
+        } finally {
+            connection.disconnect();
+        }
+    }
+
+    public String getUrlString(String urlSpec) throws  IOException {
+        return new String(getUrlBytes(urlSpec));
+    }
+}
 ```
 
 ### HttpUrlConnection发送POST请求
@@ -203,23 +244,23 @@ public class NetUtils {
   ```java
 
   private void sendRequestWithOkHttp(){
-   new Thread(new Runnable() {
-       @Override
-       public void run() {
-           try{
-               //先创建OkHttpClient
-               OkHttpClient client = new OkHttpClient();
-               //再连缀构建Request对象
-               Request request = new Request.Builder().url("http://www.baidu.com").build();
-               //通过newCall执行request获取回复
-               Response response = client.newCall(request).execute();
-               String responseData = response.body().string();
-               showResponse(responseData);
-           }catch (Exception e){
-               e.printStackTrace();
-           }
-       }
-   }).start();
+  new Thread(new Runnable() {
+  @Override
+  public void run() {
+      try{
+          //先创建OkHttpClient
+          OkHttpClient client = new OkHttpClient();
+          //再连缀构建Request对象
+          Request request = new Request.Builder().url("http://www.baidu.com").build();
+          //通过newCall执行request获取回复
+          Response response = client.newCall(request).execute();
+          String responseData = response.body().string();
+          showResponse(responseData);
+      }catch (Exception e){
+          e.printStackTrace();
+      }
+  }
+  }).start();
   }
   ```
 
@@ -275,6 +316,4 @@ public static final MediaType JSON = MediaType.parse("application/json; charset=
             throw new IOException("Unexpected code " + response);
         }
     }
-
 ```
-
