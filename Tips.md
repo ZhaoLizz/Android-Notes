@@ -119,5 +119,45 @@ getActivity().onBackPressed();
 ```java
 android:divider="?android:attr/dividerHorizontal"
 android:showDividers = "middle|end|beginning|none"
+```
 
+## 控件扩充空间属性：padding
+
+# 引用主题Theme中的属性:?attr/
+
+- `android:background="?attr/colorAccent"`
+
+## 安卓布局模板
+
+- `android.R.layout.XXX`
+
+## 利用Uri.Builder构建完整的API的请求URL
+
+```java
+String url = Uri.parse("https://api.flickr.com//services/rest")
+                   .buildUpon()
+                   .appendQueryParameter("method", "flickr.photos.getRecent")
+                   .appendQueryParameter("api_key", API_KEY)
+                   .appendQueryParameter("format", "json")
+                   .appendQueryParameter("nojsoncallback", "1")
+                   .appendQueryParameter("extras", "url_s")
+                   .build().toString();
+```
+
+## 通过R.drawable.id构建Drawable对象
+
+`Drawable placeHolder = getResources().getDrawable(R.drawable.bill_up_close);`
+
+## 检查后台网络的可用性
+
+- `<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>`
+
+```java
+private boolean isNetworkAvailableAndConnected() {
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
+        boolean isNetworkAvailable = cm.getActiveNetworkInfo() != null;
+        boolean isNetworkConnected = isNetworkAvailable && cm.getActiveNetworkInfo().isConnected();
+
+        return isNetworkConnected;
+    }
 ```
