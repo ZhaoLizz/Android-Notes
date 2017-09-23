@@ -1,8 +1,9 @@
 # 广播机制
 
 - 由Intent作为载体
+- onReceive方法运行在主线程,不能执行费时操作
 
-## 一、接收系统广播
+## 一、接收广播
 
 ### 1.动态注册:
 
@@ -185,6 +186,33 @@ public class MyBroadcastReceiver extends BroadcastReceiver {
         abortBroadcast();
     }
 }
+```
+
+### 3.发送带有自定义权限广播
+
+1. 在manifest中声明并添加私有权限
+2. 使用`sendBroadcast(Intent,String receiverPermission)`发送带有权限的`broadcast`
+3. 注册接收器时`getActivity().registerReceiver(mOnShowNotification, filter, String permission, null);`
+
+```xml
+<permission
+        android:name="com.example.a6100890.photogallery.PRIVATE"
+        android:protectionLevel="signature"
+        />
+
+
+    <uses-permission android:name="com.example.a6100890.photogallery.PRIVATE"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
+```
+
+```java
+//发送带有自定义权限的广播
+            sendBroadcast(new Intent(ACTION_SHOW_NOTIFICATION), PERM_PRIVATE);
+```
+
+```java
+//注册拥有私有权限的广播接收器广播接收器
+       getActivity().registerReceiver(mOnShowNotification, filter, PollService.PERM_PRIVATE, null);
 ```
 
 ## 三、使用本地广播
