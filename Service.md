@@ -2,11 +2,15 @@
 
 ## 一、服务基本用法
 * 服务中的代码默认在主线程运行，如果需要在服务中处理耗时逻辑，就需要在服务的每个具体方法中开启子线程，并记得服务执行完毕后自动停止（stopSelf()）
+
+
 1. 快捷方式创建服务，重写onCreate,onStartCommmand（启动服务时调用）,onDestory方法 手动创建需要在Manifest中声明
 2. 在活动中通过intent启动或终止服务 startService(),stopService()
- ```java 
+
+
+ ```java
  //MyService服务
-  public class MyService extends Service { 
+  public class MyService extends Service {
 
     public MyService() { }
 
@@ -19,21 +23,21 @@
 
   @Override
 
-  //创建服务时调用 
+  //创建服务时调用
   public void onCreate() {
    super.onCreate();
    Log.d("MyService","oncreate");
   }
 
-  @Override 
-  //服务启动时调用 
+  @Override
+  //服务启动时调用
   public int onStartCommand(Intent intent, int flags, int startId) {
    Log.d("MyService","onstartCommand");
    return super.onStartCommand(intent, flags, startId);
   }
 
 
-  @Override 
+  @Override
   public void onDestroy() {
    super.onDestroy();
    Log.d("MyService","ondestory");
@@ -41,6 +45,8 @@
  }
 
 ```
+
+
 ```java
 //MainActivity
 @Override
@@ -60,12 +66,16 @@
     }
 ````
 
+
+
 ## 二、活动与服务通信
 
 1. 在服务内创建实现了想要的功能的类，获取实例
 2. 实现服务内的onBind方法，返回服务内功能类的实例，作为对活动类开放的接口
 3. 在活动中创建onServiceConnected类，重写onServiceConnected与onServiceDisconnected方法，这两个方法分别在活动与服务绑定与解绑成功时调用。在绑定成功方法中通过**向下转型**获取服务内功能类的实例并执行功能方法
 4. 在活动中通过 `bindService(bindIntent, connection,BIND_AUTO_CREATE);` `unbindService(connection);` 实现活动与服务的绑定与解绑
+
+
 
 ```java
 //MyService
@@ -119,6 +129,8 @@ public class MyService extends Service {
 }
 ```
 
+
+
 ```java
 //MainActivity
     private MyService.DownloadBinder downloadBinder;
@@ -140,6 +152,8 @@ public class MyService extends Service {
     };
 ```
 
+
+
 ```java
 //onClick
             case R.id.bind_service:
@@ -153,12 +167,18 @@ public class MyService extends Service {
                 break;
 ```
 
+
 ## 三、使用前台服务
+
 * 利用构建的通知实现系统状态栏显示前台服务
+
+
   1. 在服务中创建Intent作为通知的点击事件活动
   2. 包装Intent为PendingIntent
   3. 构建一条通知，加入包装好的pendingIntent
   4. startForeground(1,notification)启动前台，第一个参数是通知的id
+
+
 
 ```java
 //MyService
@@ -180,7 +200,7 @@ Intent intent = new Intent(this,MainActivity.class);
         startForeground(1,notification);//第一个参数是通知的id
 ```
 
-## 四、使用IntentService
+## 四、最常用:IntentService
 
 * 此服务在运行结束后自动停止
 * 重写的方法onHandleIntent默认在子线程中运行
@@ -188,6 +208,8 @@ Intent intent = new Intent(this,MainActivity.class);
 1. 创建MyIntentService继承自IntentService
 2. 构造函数、重写onHanleIntent、onDestory等必要方法
 3. 在Manifest中注册活动
+
+
 
 ```java
 //MyIntentService
@@ -226,8 +248,3 @@ case R.id.start_intent_service:
 //Manifest, application标签内
 <service android:name=".MyIntentService"/>
 ```
-
-
-
-
-
